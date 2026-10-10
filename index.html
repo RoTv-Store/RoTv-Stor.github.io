@@ -369,7 +369,7 @@ bs[0].onclick=function(){cart[r.x.id]--;if(cart[r.x.id]<1)delete cart[r.x.id];ca
 bs[1].onclick=function(){cart[r.x.id]++;cartUI();drawCart()};
 b.appendChild(d)});
 curTot=tot;$("cTot").textContent=!L.length?"۰ تومان":unk?"بعضی قیمت‌ها هنوز ثبت نشده":fa(tot)+" تومان";
-$("cGo").textContent=unk?"پرسیدن قیمت از ادمین":"ادامه به پرداخت";$("cGo").dataset.unk=unk?"1":""}
+var _n=L.some(function(r){return r.x.k=="n"});$("cGo").textContent=_n&&!unk?"هماهنگی خرید با ادمین":unk?"پرسیدن قیمت از ادمین":"ادامه به پرداخت";$("cGo").dataset.unk=unk?"1":""}
 $("cartBtn").onclick=function(){drawCart();$("ovCart").classList.add("on")};
 $("cGo").onclick=function(){var L=cartList();if(!L.length){toast("سبد خالی است");return}
 var u=$("cUser").value.replace("@","").replace(/[^A-Za-z0-9_]/g,"");if(u.length<4){toast("یوزرنیم تلگرام را درست وارد کن");return}
@@ -379,6 +379,13 @@ payU=u;$("pInfo").textContent=fa(L.length)+" مورد برای @"+u;$("pAmt").te
 $("pSend").onclick=function(){var r=$("pRef").value.trim();if(!r){toast("شماره پیگیری را وارد کن");return}
 var m="سفارش جدید RoTv\n"+cartList().map(function(q){return"• "+label(q.x)+" × "+q.n}).join("\n")+"\nیوزرنیم گیرنده: @"+payU+"\nجمع: "+fa(curTot)+" تومان\nشماره پیگیری / ۴ رقم آخر کارت: "+r;
 window.open("https://t.me/"+S.cfg.support+"?text="+encodeURIComponent(m),"_blank");$("ovPay").classList.remove("on");cart={};cartUI()};
+$("cGo").onclick=function(){var L=cartList();if(!L.length){toast("سبد خالی است");return}
+var u=$("cUser").value.replace("@","").replace(/[^A-Za-z0-9_]/g,"");if(u.length<4){toast("یوزرنیم تلگرام را درست وارد کن");return}
+var hasN=L.some(function(r){return r.x.k=="n"}),unk=L.some(function(r){return !(r.x.p>0)});
+var lines=L.map(function(q){return"• "+label(q.x)+" × "+q.n+(q.x.p>0?" ("+fa(q.x.p*q.n)+" تومان)":"")}).join("\n");
+if(unk||hasN){var head=unk?"سلام، قیمت این موارد چنده؟":"سلام، می‌خوام این موارد رو بخرم؛ هماهنگ کنیم";
+window.open("https://t.me/"+S.cfg.support+"?text="+encodeURIComponent(head+"\n"+lines+(curTot>0?"\nجمع: "+fa(curTot)+" تومان":"")+"\nیوزرنیم: @"+u),"_blank");$("ovCart").classList.remove("on");return}
+payU=u;$("pInfo").textContent=fa(L.length)+" مورد برای @"+u;$("pAmt").textContent=fa(curTot)+" تومان";$("pBank").textContent=cf("bank");$("pCard").textContent=cf("card")||"شماره کارت هنوز ثبت نشده";$("pHolder").textContent=cf("holder")?"به نام "+cf("holder"):"";$("pRef").value="";$("ovCart").classList.remove("on");$("ovPay").classList.add("on")};
 var sct;addEventListener("scroll",function(){document.body.classList.add("sc");clearTimeout(sct);sct=setTimeout(function(){document.body.classList.remove("sc")},160)},{passive:true});
 function flyGift(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
 var L=S.items.filter(function(x){return x.e}),x=L[Math.floor(Math.random()*L.length)];
